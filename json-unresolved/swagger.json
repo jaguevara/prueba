@@ -1,0 +1,406 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters.",
+    "version" : "1.0.0",
+    "title" : "Swagger Petstore",
+    "termsOfService" : "http://swagger.io/terms/",
+    "contact" : {
+      "email" : "apiteam@swagger.io"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "tags" : [ {
+    "name" : "productos",
+    "description" : "Especificacion de productos del sistema",
+    "externalDocs" : {
+      "description" : "Find out more",
+      "url" : "http://swagger.io"
+    }
+  } ],
+  "paths" : {
+    "/productos" : {
+      "get" : {
+        "tags" : [ "productos" ],
+        "summary" : "Extrae toda la lista de productos disponibles",
+        "description" : "Devuelvel todos registros de productos",
+        "operationId" : "productosAll",
+        "produces" : [ "application/xml", "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/producto"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request. User ID must be an integer and larger than 0."
+          },
+          "401" : {
+            "description" : "Authorization information is missing or invalid."
+          },
+          "404" : {
+            "description" : "A user with the specified ID was not found."
+          }
+        },
+        "security" : [ {
+          "producto_auth" : [ "read:producto" ]
+        } ]
+      }
+    },
+    "/producto/{idProducto}" : {
+      "get" : {
+        "tags" : [ "productos por id" ],
+        "summary" : "Extrae toda la lista de productos disponibles por id",
+        "description" : "Devuelve todos registros de productos dependiendo del id",
+        "operationId" : "productoPorId",
+        "produces" : [ "application/xml", "application/json" ],
+        "parameters" : [ {
+          "name" : "idProducto",
+          "in" : "path",
+          "description" : "valores para hacer los filtros de retorno",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/producto"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request. User ID must be an integer and larger than 0."
+          },
+          "401" : {
+            "description" : "Authorization information is missing or invalid."
+          },
+          "404" : {
+            "description" : "A user with the specified ID was not found."
+          }
+        },
+        "security" : [ {
+          "producto_auth" : [ "read:producto" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "productos por id" ],
+        "summary" : "actualizar producto",
+        "description" : "actualiza productos",
+        "operationId" : "updateProducto",
+        "consumes" : [ "application/json", "application/xml" ],
+        "produces" : [ "application/xml", "application/json" ],
+        "parameters" : [ {
+          "name" : "idProducto",
+          "in" : "path",
+          "description" : "retorno del id del producto",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "description" : "Updated productos object",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/producto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "success"
+          },
+          "400" : {
+            "description" : "Invalid ID supplied"
+          },
+          "404" : {
+            "description" : "Producto not found"
+          },
+          "405" : {
+            "description" : "Validation exception"
+          }
+        },
+        "security" : [ {
+          "producto_auth" : [ "write:producto", "read:producto" ]
+        } ]
+      }
+    }
+  },
+  "securityDefinitions" : {
+    "producto_auth" : {
+      "type" : "oauth2",
+      "authorizationUrl" : "http://petstore.swagger.io/oauth/dialog",
+      "flow" : "implicit",
+      "scopes" : {
+        "write:producto" : "modify pets in your account",
+        "read:producto" : "read your pets"
+      }
+    },
+    "api_key" : {
+      "type" : "apiKey",
+      "name" : "api_key",
+      "in" : "header"
+    }
+  },
+  "definitions" : {
+    "categoriaProducto" : {
+      "description" : "catalogo de categorias para clasificar los productos (002)",
+      "type" : "object",
+      "required" : [ "idCategoria", "categoria", "naturaleza" ],
+      "properties" : {
+        "idCategoria" : {
+          "type" : "number",
+          "format" : "10,0"
+        },
+        "categoria" : {
+          "type" : "string",
+          "maxLength" : 100
+        },
+        "naturaleza" : {
+          "type" : "string",
+          "maximum" : 15,
+          "description" : "clasifica el producto, puede ser animal,ganado,vegetal,insumo,animal vivo"
+        },
+        "idAcuerdo" : {
+          "type" : "number",
+          "format" : "10,0",
+          "description" : "indica el numero de acuerdo, no todas las categorias lo tienen o poseen"
+        }
+      }
+    },
+    "producto" : {
+      "description" : "productos agropecuarios (003)",
+      "type" : "object",
+      "required" : [ "id", "idProducto", "producto", "nivel_estructura" ],
+      "properties" : {
+        "idRegistro" : {
+          "type" : "number",
+          "format" : "10,0",
+          "description" : "id del registro"
+        },
+        "idProducto" : {
+          "type" : "string",
+          "maxLength" : 20,
+          "description" : "codigo del producto basado en SAC"
+        },
+        "nivelEstructura" : {
+          "type" : "number",
+          "format" : "2,0",
+          "description" : "nivel del producto en la jerarquia de clasificacion, permite los siguientes valores (1,2,3,4,5,6,7,8)"
+        },
+        "naturaleza" : {
+          "type" : "string",
+          "maximum" : 15,
+          "description" : "clasifica el producto, puede ser animal,ganado,vegetal,insumo,animal vivo"
+        },
+        "idSuperior" : {
+          "type" : "string",
+          "maxLength" : 20,
+          "description" : "codigo del producto de nivel superior, hace referencia al codigo sac de esta misma entidad (producto.idProducto)"
+        },
+        "idCategoria" : {
+          "$ref" : "#/definitions/categoriaProducto"
+        },
+        "aspersion" : {
+          "type" : "string",
+          "maxLength" : 2,
+          "description" : "indica si el producto necesita tratamiento o aspersion, puede ser si/no",
+          "example" : "no"
+        },
+        "idProductoN" : {
+          "type" : "string",
+          "maxLength" : 20,
+          "description" : "campo auxiliar para reclasificar productos, si aplica, el codigo del producto segun sac"
+        },
+        "idProductoNVO" : {
+          "type" : "string",
+          "maxLength" : 20,
+          "description" : "campo auxiliar para reclasificar productos, si aplica, el codigo del producto segun sac"
+        },
+        "riesgo" : {
+          "type" : "string",
+          "maxLength" : 10,
+          "description" : "indica el nivel de riesgo sanitario del producto, puede ser alto, medio, bajo, ninguno",
+          "example" : "alto"
+        },
+        "controlado" : {
+          "type" : "string",
+          "maxLength" : 1,
+          "description" : "puede ser s o n"
+        },
+        "categoria" : {
+          "type" : "string",
+          "maxLength" : 1,
+          "description" : "indica la categoria del producto"
+        },
+        "categoria_riesgo" : {
+          "type" : "string",
+          "maxLength" : 1,
+          "description" : "indica la categoria del producto, puede ser a,b,c"
+        }
+      }
+    },
+    "requisitoProducto" : {
+      "description" : "Maestro de reqisitofitozanitario para import/export de productos agropecuarios (010)",
+      "type" : "object",
+      "required" : [ "idProducto", "id" ],
+      "properties" : {
+        "idProducto" : {
+          "$ref" : "#/definitions/producto"
+        },
+        "idRequisito" : {
+          "type" : "number",
+          "format" : "10,0",
+          "description" : "id del registro"
+        },
+        "textoResumen" : {
+          "type" : "string",
+          "maxLength" : 40000,
+          "description" : "texto resumen del requisito, aca se escribe la prosa"
+        },
+        "transaccion" : {
+          "type" : "string",
+          "maxLength" : 20,
+          "description" : "indica el tipo de transaccion, imporat/export"
+        },
+        "tipo_requisito" : {
+          "type" : "string",
+          "maxLength" : 20,
+          "description" : "clasificacion del requisito segun su tioo, puede ser legal, tecnico, administrativo"
+        }
+      }
+    },
+    "detalleRequisitoProducto" : {
+      "description" : "detlle de paises/departamentos a los que aplica el requisito sanitario de un producto agropecuario (011)",
+      "type" : "object",
+      "required" : [ "idProducto", "id" ],
+      "properties" : {
+        "idProducto" : {
+          "$ref" : "#/definitions/producto"
+        },
+        "idRequisito" : {
+          "$ref" : "#/definitions/requisitoProducto"
+        },
+        "idPais" : {
+          "$ref" : "#/definitions/pais"
+        },
+        "idDepartamento" : {
+          "$ref" : "#/definitions/departamento"
+        }
+      }
+    },
+    "pais" : {
+      "description" : "master de paises (006)",
+      "type" : "object",
+      "required" : [ "idPais", "pais" ],
+      "properties" : {
+        "idPais" : {
+          "type" : "number",
+          "format" : "10,0",
+          "description" : "id del pais"
+        },
+        "pais" : {
+          "type" : "string",
+          "maxLength" : 50,
+          "description" : "nombre del pais."
+        },
+        "codPais" : {
+          "type" : "string",
+          "maxLength" : 10,
+          "description" : "codigo de pais segun DGA"
+        }
+      }
+    },
+    "departamento" : {
+      "description" : "master de departamentos (007)",
+      "type" : "object",
+      "required" : [ "idPais", "idDepartamento", "departamento" ],
+      "properties" : {
+        "idPais" : {
+          "type" : "number",
+          "format" : "10,0",
+          "description" : "id del pais"
+        },
+        "idPepartamento" : {
+          "type" : "number",
+          "format" : "10,0",
+          "description" : "id del departamento"
+        },
+        "departamento" : {
+          "type" : "string",
+          "maxLength" : 50,
+          "description" : "nombre del pais."
+        }
+      }
+    },
+    "catalogoDocumentosExigibles" : {
+      "description" : "catalogo de documentos exigibles como requisitos para la importacion de productods agropecuarios (017)",
+      "type" : "object",
+      "required" : [ "idPais", "pais" ],
+      "properties" : {
+        "idDocumento" : {
+          "type" : "number",
+          "format" : "10,0",
+          "description" : "id del registro"
+        },
+        "documentoEx" : {
+          "type" : "string",
+          "maxLength" : 100,
+          "description" : "descricion del documento."
+        }
+      }
+    },
+    "documentosExigiblesPorPais" : {
+      "description" : "detalle de documentos exigibles por pais que son requisitos  para la importacion de productos agroepcuarios (018)",
+      "type" : "object",
+      "required" : [ "idPais", "idDepartamento", "departamento" ],
+      "properties" : {
+        "idProducto" : {
+          "$ref" : "#/definitions/producto"
+        },
+        "idPais" : {
+          "$ref" : "#/definitions/pais"
+        },
+        "idDocumentoEx" : {
+          "$ref" : "#/definitions/catalogoDocumentosExigibles"
+        },
+        "transaccion" : {
+          "type" : "string",
+          "maxLength" : 20,
+          "description" : "indica el tipo de transaccion, imporat/export"
+        }
+      }
+    },
+    "ApiResponse" : {
+      "type" : "object",
+      "properties" : {
+        "code" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "type" : {
+          "type" : "string"
+        },
+        "message" : {
+          "type" : "string"
+        }
+      }
+    }
+  },
+  "externalDocs" : {
+    "description" : "Find out more about Swagger",
+    "url" : "http://swagger.io"
+  },
+  "host" : "virtserver.swaggerhub.com",
+  "basePath" : "/jarevalo/mag_ciex/1.0.0",
+  "schemes" : [ "https", "http" ]
+}
